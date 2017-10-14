@@ -27,11 +27,11 @@ var PillSchema = new Schema({
 });
 
 var UserSchema = new Schema({
-    _id: String,
+    userID: String,
     recent_search: {
         type: String
     }
 })
 
 module.exports = mongoose.model('Pills', PillSchema),
-    mongoose.model('User',UserSchema);
+    mongoose.model('Users',UserSchema);
