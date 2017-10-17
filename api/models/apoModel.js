@@ -10,9 +10,9 @@ var PillSchema = new Schema({
         type: String,
         enum: ["","BULLET","CAPSULE", "CLOVER", "DIAMOND", "DOUBLE", "FREEFORM", "GEAR", "HEPTAGON", "HEXAGON", "OCTAGON", "OVAL", "PENTAGON", "RECTANGLE", "ROUND", "SEMI-CIRCLE","SQUARE", "TEAR", "TRAPEZOID", "TRIANGLE"]
     },
-    imprint: String,
+    imprint: [String],
     color: {
-        type: String,
+        type: [String],
         enum: ["","BLACK", "BLUE", "BROWN", "GRAY","GREEN","ORANGE","PINK","PURPLE","RED","TURQUOISE","WHITE","YELLOW"]
     },
     active_ingredient: [ String],

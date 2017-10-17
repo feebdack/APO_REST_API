@@ -19,7 +19,7 @@ var pbar_length = 0;
 //DEPRICATE:var tsv_json_option = {input: "data/Single_Entry_Pill.txt", output:"data/output.json"};
 
 //Location of the TSV file being imported
-var tsv_file = {input:"data/Five_Entry_Pill.txt"};
+var tsv_file = {input:"data/pillbox_201605.txt"};
 
 //Parse the TSV file, and return as json_array
 tsv(tsv_file,function(err,result_json){
@@ -64,11 +64,11 @@ exports.save_json_array = function(input){
             pillID: parseInt(pill_obj.ID),
             setid: pill_obj.setid,
             shape: pill_obj.splshape_text.split(" ")[0],
-            imprint: pill_obj.splimprint_new,
+            imprint: pill_obj.splimprint_new.split(";"),
             color: pill_obj.splcolor_text.split(" ")[0].split(";"),
             active_ingredient: pill_obj.spl_strength.split(";"),
             inactive_ingredient: pill_obj.spl_inactive_ing_new.split(";"),
-            rxString: pill_obj.rxString_new,
+            rxString: pill_obj.rxString_new || pill_obj.rxString,
             product_code: pill_obj.product_code,
             medicine_name:pill_obj.medicine_name,
             equal_product_code:pill_obj.equal_product_code,
@@ -104,9 +104,11 @@ exports.add_json_pill_to_db = function(input_json_pill){
     Pill.findOneAndUpdate({pillID:input_json_pill.pillID},input_json_pill,function(err,result){
         if(err){throw err}
         else{
+            var new_pill_flag = false;
             if(!result){
                 //Creates a new Pill object if none exists
                 result = new Pill(input_json_pill);
+                new_pill_flag = true;
             }
             //Saves Pill object (updated or new) into database
             result.save(function(error){
