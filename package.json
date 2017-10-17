@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "START mongod & SET NODE_ENV=development& nodemon server.js",
-    "import":"nodemon data_import.js"
+    "import":"nodemon data_import.js",
+    "import_dev":"START mongod & nodemon data_import.js"
   },
   "repository": {
     "type": "git",

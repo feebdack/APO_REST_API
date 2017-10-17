@@ -8,15 +8,15 @@ var PillSchema = new Schema({
     setid: String,
     shape: {
         type: String,
-        enum: ["Bullet","Capsule", "Clover", "Diamond", "Double", "Freeform", "Gear", "Heptagon", "Hexagon", "Octagon", "Oval", "Pentagon", "Rectangle", "Round", "Semi-circle","Square", "Tear", "Trapezoid", "Triangle"]
+        enum: ["","BULLET","CAPSULE", "CLOVER", "DIAMOND", "DOUBLE", "FREEFORM", "GEAR", "HEPTAGON", "HEXAGON", "OCTAGON", "OVAL", "PENTAGON", "RECTANGLE", "ROUND", "SEMI-CIRCLE","SQUARE", "TEAR", "TRAPEZOID", "TRIANGLE"]
     },
     imprint: String,
     color: {
         type: String,
-        enum: ["Black", "Blue", "Brown", "Gray","Green","Orange","Pink","Purple","Red","Turquoise","White","Yellow"]
+        enum: ["","BLACK", "BLUE", "BROWN", "GRAY","GREEN","ORANGE","PINK","PURPLE","RED","TURQUOISE","WHITE","YELLOW"]
     },
-    active_ingredient: [ {name: String, amount: Number}],
-    inactive_ingredient:[{name: String, amount: Number}],
+    active_ingredient: [ String],
+    inactive_ingredient:[ String ],
     rxString: String,
     product_code: String,
     medicine_name: String,
