@@ -11,6 +11,7 @@ var option = {input: "data/Single_Entry_Pill.txt", output:"data/output.json"}
 var that = this;
 var json;
 
+<<<<<<< HEAD
 //Creates or updates database with incoming JSON object.
 //input_json_pill needs to be formated according to pill schema located at api/models/apoModel.js
 exports.add_json_pill_to_db = function(input_json_pill){
@@ -106,12 +107,27 @@ exports.save_json_array = function(input){
 };
 
 
+=======
+exports.save_json = function(input){
+    json = input;
+    console.log(json)
+}
+
+>>>>>>> master
 tsv(option,function(err,result){
     var saver = require('./data_import')
     if(err){
         console.log(error);
+<<<<<<< HEAD
     }
     console.log("TSV File Read");
     pbar_length = result.length;
     saver.save_json_array(result);
 });
+=======
+    }else{
+        //console.log(result);
+        saver.save_json(result);
+    }
+})
+>>>>>>> master
