@@ -29,7 +29,8 @@
   "dependencies": {
     "express": "^4.16.1",
     "mongoose": "^4.11.13",
-    "progress":"2.0.0"
+    "progress":"2.0.0",
+    "node-tsv-json":"0.2.1"
   },
   "nodemonConfig": {
     "ignore": ["data/*", "docs/*"]
