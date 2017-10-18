@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "express": "^4.16.1",
-    "mongoose": "^4.11.13"
+    "mongoose": "^4.11.13",
+    "progress":"2.0.0"
   },
   "nodemonConfig": {
     "ignore": ["data/*", "docs/*"]
