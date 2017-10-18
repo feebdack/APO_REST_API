@@ -31,6 +31,7 @@ process.on('SIGINT',function(){
     console.log('Termination called.')
     mongoose.connection.close(function(){
         console.log('Connection closed.');
+        process.exit();
     });
 });
 
