@@ -3,11 +3,37 @@ console.log("Data Import Started.");
 
 var progress_bar = require('progress');
 var tsv = require('node-tsv-json');
+
+//Database
 var mongoose = require('mongoose'),
     Pill = require('./api/models/apoModel');
 
+var dbURI = 'mongodb://localhost/apo_dev';
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/apo_dev',{ useMongoClient: true });
+
+//Databse Connection Events Handlers
+mongoose.connection.on("connected",function(){
+    var importer = require('./data_import')
+    console.log("Connection to " + dbURI + " established succesfully.");
+    importer.start_import();
+});
+
+mongoose.connection.on('error',function(err){
+    console.log("DB ERROR: " + err);
+});
+
+mongoose.connection.on('disconnected',function(){
+    console.log('DB CONNECTION LOST.');
+});
+
+process.on('SIGINT',function(){
+    console.log('Termination called.')
+    mongoose.connection.close(function(){
+        console.log('Connection closed.');
+    });
+});
+
 
 //Progress Bar Variables
 //Ubar and Pbar contain the progress bar objects
@@ -21,16 +47,19 @@ var pbar_length = 0;
 //Location of the TSV file being imported
 var tsv_file = {input:"data/pillbox_201605.txt"};
 
-//Parse the TSV file, and return as json_array
-tsv(tsv_file,function(err,result_json){
-    var saver = require('./data_import')
-    if(err){
-        console.log(error);
-    }
-    console.log("TSV File Read");
-    pbar_length = result_json.length;
-    saver.save_json_array(result_json);
-});
+exports.start_import = function(){
+    //Parse the TSV file, and return as json_array
+    tsv(tsv_file,function(err,result_json){
+        var saver = require('./data_import')
+        if(err){
+            console.log(error);
+        }
+        console.log("TSV File Read");
+        pbar_length = result_json.length;
+        saver.save_json_array(result_json);
+    });
+}
+
 
 //Prepares JSON object into Pill Schema format
 exports.save_json_array = function(input){
@@ -90,18 +119,24 @@ exports.add_json_pill_to_db = function(input_json_pill){
 
     //Shows progress bar for completed database saves
     if(ubar == null)
-        {ubar = new progress_bar('[:bar] :percent',{
+        {ubar = new progress_bar('[:bar] :percent :current/:total queries',{
             complete: '=',
             incomplete: ' ',
             width: 50,
             renderThrottle: 100,
             total:pbar_length,
-            callback:function(){setTimeout(process.exit(),1000)}
+            callback:function(){
+                console.log('Import complete.')
+                mongoose.connection.close(function(){
+                    console.log('DB Connection Closed');
+                    process.exit();
+                });
+            }
             }
         )}
 
     //Save the entries. Updates if existing
-    Pill.findOneAndUpdate({pillID:input_json_pill.pillID},input_json_pill,function(err,result){
+    Pill.findOneAndUpdate({pillID:input_json_pill.pillID},input_json_pill,{upsert:true},function(err,result){
         if(err){throw err}
         else{
             var new_pill_flag = false;

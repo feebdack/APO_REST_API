@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var PillSchema = new Schema({
-    _id: Schema.ObjectId,
+    _id: mongoose.Schema.ObjectId,
     pillID: Number,
     setid: String,
     shape: {
