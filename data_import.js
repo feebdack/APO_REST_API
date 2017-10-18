@@ -8,9 +8,11 @@ var tsv = require('node-tsv-json');
 var mongoose = require('mongoose'),
     Pill = require('./api/models/apoModel');
 
-var dbURI = 'mongodb://localhost/apo_dev';
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/apo_dev',{ useMongoClient: true });
+var dboption = {
+    useMongoClient:true
+};
+
+var dbURI = 'mongodb://127.0.0.1/apo_dev';
 
 //Databse Connection Events Handlers
 mongoose.connection.on("connected",function(){
@@ -25,6 +27,7 @@ mongoose.connection.on('error',function(err){
 
 mongoose.connection.on('disconnected',function(){
     console.log('DB CONNECTION LOST.');
+    process.exit();
 });
 
 process.on('SIGINT',function(){
@@ -35,6 +38,9 @@ process.on('SIGINT',function(){
     });
 });
 
+mongoose.Promise = global.Promise;
+mongoose.connect(dbURI,{useMongoClient:true});
+
 
 //Progress Bar Variables
 //Ubar and Pbar contain the progress bar objects
@@ -43,7 +49,7 @@ var ubar,pbar;
 var pbar_length = 0;
 
 //DEPRICATE:options for the tsv-json parser
-//DEPRICATE:var tsv_json_option = {input: "data/Single_Entry_Pill.txt", output:"data/output.json"};
+//var tsv_file = {input: "data/Single_Entry_Pill.txt"};
 
 //Location of the TSV file being imported
 var tsv_file = {input:"data/pillbox_201605.txt"};
@@ -89,7 +95,7 @@ exports.save_json_array = function(input){
         var inactive_ingredient_strings = pill_obj.spl_inactive_ing_new.split(";");
         var inactive_ingredients = JSON.stringify(inactive_ingredient_strings);
 
-        //Create a JSON object with only the necessary parameters
+        //Create a JSON object with only the necessary elements
         var new_pill = {
             pillID: parseInt(pill_obj.ID),
             setid: pill_obj.setid,
@@ -118,7 +124,7 @@ exports.save_json_array = function(input){
 //input_json_pill needs to be formated according to pill schema located at api/models/apoModel.js
 exports.add_json_pill_to_db = function(input_json_pill){
 
-    //Shows progress bar for completed database saves
+    //Progress bar for completed database saves
     if(ubar == null)
         {ubar = new progress_bar('[:bar] :percent :current/:total queries',{
             complete: '=',
@@ -136,22 +142,13 @@ exports.add_json_pill_to_db = function(input_json_pill){
             }
         )}
 
-    //Save the entries. Updates if existing
-    Pill.findOneAndUpdate({pillID:input_json_pill.pillID},input_json_pill,{upsert:true},function(err,result){
-        if(err){throw err}
-        else{
-            var new_pill_flag = false;
-            if(!result){
-                //Creates a new Pill object if none exists
-                result = new Pill(input_json_pill);
-                new_pill_flag = true;
-            }
-            //Saves Pill object (updated or new) into database
-            result.save(function(error){
-                if(error){throw error;}
+    //Update entries, save if non-existing
+        Pill.findOneAndUpdate({pillID:input_json_pill.pillID},input_json_pill,{upsert:true},function(err,result){
+            if(err){throw err}
+            else{
                 ubar.tick();
                 ubar.render();
-            })
-        }
-    });
+            }
+        });
+
 }
