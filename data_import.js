@@ -1,60 +1,64 @@
 'use strict';
-console.log("Data Import Started.");
+console.log("-----Pill Data Importer-----");
 
-var progress_bar = require('progress');
-var tsv = require('node-tsv-json');
+//Required Modules
+    var progress_bar = require('progress');
+    var tsv = require('node-tsv-json');
 
-//Database
-var mongoose = require('mongoose'),
+//Database variables
+    var mongoose = require('mongoose'),
     Pill = require('./api/models/apoModel');
 
-var dboption = {
-    useMongoClient:true
-};
 
-var dbURI = 'mongodb://127.0.0.1/apo_dev';
 
-//Databse Connection Events Handlers
-mongoose.connection.on("connected",function(){
-    var importer = require('./data_import')
-    console.log("Connection to " + dbURI + " established succesfully.");
-    importer.start_import();
-});
+//Connect to database
+    var dbURI = 'mongodb://127.0.0.1/apo_dev';    
+    mongoose.Promise = global.Promise;
+    mongoose.connect(dbURI,{useMongoClient:true});
 
-mongoose.connection.on('error',function(err){
-    console.log("DB ERROR: " + err);
-});
+//Databse Events Handlers
 
-mongoose.connection.on('disconnected',function(){
-    console.log('DB CONNECTION LOST.');
-    process.exit();
-});
+    Pill.on("index",function(err){
+        if(err){throw err;}
+        console.log("Indexes for data_import finished building.");
+    })
+    mongoose.connection.on("connected",function(){
+        var importer = require('./data_import')
+        console.log("Connection to " + dbURI + " established succesfully.");
+        importer.read_tsv_file();
+    });
 
-process.on('SIGINT',function(){
-    console.log('Termination called.')
-    mongoose.connection.close(function(){
-        console.log('Connection closed.');
+    mongoose.connection.on('error',function(err){
+        console.log("DB ERROR: " + err);
+    });
+
+    mongoose.connection.on('disconnected',function(){
+        console.log('DB DISCONNECTED.');
         process.exit();
     });
-});
 
-mongoose.Promise = global.Promise;
-mongoose.connect(dbURI,{useMongoClient:true});
+    process.on('SIGINT',function(){
+        console.log('Termination called.')
+        mongoose.connection.close(function(){
+            process.exit();
+        });
+    });
 
 
 //Progress Bar Variables
 //Ubar and Pbar contain the progress bar objects
 //pbar_length contains the number of ticks needed to complete the progress bar
-var ubar,pbar;
-var pbar_length = 0;
+    var ubar,pbar;
+    var pbar_length = 0;
 
-//DEPRICATE:options for the tsv-json parser
-//var tsv_file = {input: "data/Single_Entry_Pill.txt"};
 
 //Location of the TSV file being imported
-var tsv_file = {input:"data/pillbox_201605.txt"};
+    var tsv_file = {input:"data/pillbox_201605.txt"};
+    //var tsv_file = {input: "data/Five_Entry_Pill.txt"};
 
-exports.start_import = function(){
+//read_tsv_file initializes the data import.
+//This function will create JSON objects out of the tsv_file contents.
+exports.read_tsv_file = function(){
     //Parse the TSV file, and return as json_array
     tsv(tsv_file,function(err,result_json){
         var saver = require('./data_import')
@@ -63,13 +67,14 @@ exports.start_import = function(){
         }
         console.log("TSV File Read");
         pbar_length = result_json.length;
-        saver.save_json_array(result_json);
+        saver.format_json_pill_attributes(result_json);
     });
 }
 
 
-//Prepares JSON object into Pill Schema format
-exports.save_json_array = function(input){
+//Extracts needed data from imported pill data, and creates new JSON
+//objects containing only the necessary pill information.
+exports.format_json_pill_attributes = function(input){
     console.log('Processing ' + input.length + ' entries');
     
     //Progress bar for completion
@@ -112,7 +117,7 @@ exports.save_json_array = function(input){
             splimage:pill_obj.splimage
         }
 
-        this.add_json_pill_to_db(new_pill);
+        this.save_formated_json_pill_to_db(new_pill);
         
         //Increment the progress bar, and render the progress bar
         pbar.tick();
@@ -122,7 +127,7 @@ exports.save_json_array = function(input){
 
 //Creates or updates database with incoming JSON object.
 //input_json_pill needs to be formated according to pill schema located at api/models/apoModel.js
-exports.add_json_pill_to_db = function(input_json_pill){
+exports.save_formated_json_pill_to_db = function(input_json_pill){
 
     //Progress bar for completed database saves
     if(ubar == null)
@@ -132,12 +137,10 @@ exports.add_json_pill_to_db = function(input_json_pill){
             width: 50,
             renderThrottle: 100,
             total:pbar_length,
+            //This function ends the data import.
             callback:function(){
-                console.log('Import complete.')
-                mongoose.connection.close(function(){
-                    console.log('DB Connection Closed');
-                    process.exit();
-                });
+                var importer = require('./data_import');
+                importer.end_data_import();
             }
             }
         )}
@@ -146,9 +149,16 @@ exports.add_json_pill_to_db = function(input_json_pill){
         Pill.findOneAndUpdate({pillID:input_json_pill.pillID},input_json_pill,{upsert:true},function(err,result){
             if(err){throw err}
             else{
+                //Update progress bar
                 ubar.tick();
                 ubar.render();
             }
         });
+}
 
+exports.end_data_import = function(){
+    console.log("Import Complete");
+    mongoose.connection.close(function(){
+        process.exit();
+    });
 }
