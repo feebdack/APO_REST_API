@@ -6,11 +6,15 @@ var mongoose = require('mongoose'),
   User = mongoose.model('Users');
 
 exports.read_pill = function(req, res) {
-  Pill.findById({pillID: req.params.pillID}, function(err, pillData) {
-    if (err)
-      res.send(err);
+    //Add pillID to the query parameters
+    if(req.params.pillID != 'search')
+        req.query.pillID = req.params.pillID
+    console.log(req.query);
+    //Search for pills
+    Pill.find(req.query, function(err, pillData) {
+    if (err) {res.send(err);}
     res.json(pillData);
-  });
+    });
 };
 
 exports.find_user = function(req,res){
