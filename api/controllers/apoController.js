@@ -6,14 +6,14 @@ var mongoose = require('mongoose'),
   User = mongoose.model('Users');
 
 exports.read_pill = function(req, res) {
-    //Add pillID to the query parameters
+    //Add pillID to the query parameters if it exists
     if(req.params.pillID != 'search')
         req.query.pillID = req.params.pillID
-    console.log(req.query);
+    
     //Search for pills
     Pill.find(req.query, function(err, pillData) {
-    if (err) {res.send(err);}
-    res.json(pillData);
+        if (err) {res.send(err);}
+        res.json(pillData);
     });
 };
 
