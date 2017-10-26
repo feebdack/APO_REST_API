@@ -8,7 +8,8 @@ console.log("-----Pill Data Importer-----");
 //Database variables
     var mongoose = require('mongoose'),
     Pill = require('./api/models/apoModel');
-
+//Location of the TSV file being imported
+var import_tsv = {input:"data/pillbox_201605.txt"};
 
 
 //Connect to database
@@ -25,7 +26,10 @@ console.log("-----Pill Data Importer-----");
     mongoose.connection.on("connected",function(){
         var importer = require('./data_import')
         console.log("Connection to " + dbURI + " established succesfully.");
-        importer.read_tsv_file();
+        
+        //Make sure environment is dev for import
+        if(process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'production')
+            importer.read_tsv_file(import_tsv);
     });
 
     mongoose.connection.on('error',function(err){
@@ -55,20 +59,33 @@ console.log("-----Pill Data Importer-----");
 //Location of the TSV file being imported
     var tsv_file = {input:"data/pillbox_201605.txt"};
     //var tsv_file = {input: "data/Five_Entry_Pill.txt"};
+exports.set_tsv_file = function(fileLocation){
+    if(typeof fileLocation != 'string'){
+        throw 'File location must be of type string';
+    }else{
+        tsv_file = fileLocation;
+    }
+}
 
 //read_tsv_file initializes the data import.
 //This function will create JSON objects out of the tsv_file contents.
-exports.read_tsv_file = function(){
-    //Parse the TSV file, and return as json_array
-    tsv(tsv_file,function(err,result_json){
-        var saver = require('./data_import')
-        if(err){
-            console.log(error);
-        }
-        console.log("TSV File Read");
-        pbar_length = result_json.length;
-        saver.format_json_pill_attributes(result_json);
-    });
+exports.read_tsv_file = function(file){
+    console.log("reading tsv");
+    if(!mongoose.connection.readyState){
+        throw 'database is not ready';
+    }else{
+        //Parse the TSV file, and return as json_array
+        tsv(file,function(err,result_json){
+            var saver = require('./data_import')
+            if(err){
+                throw error;
+            }else{
+            console.log("TSV File Read");
+            pbar_length = result_json.length;
+            saver.format_json_pill_attributes(result_json);
+            }
+        });
+    }
 }
 
 
