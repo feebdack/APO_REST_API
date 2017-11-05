@@ -18,7 +18,7 @@ exports.read_pill = function(req, res) {
 };
 
 exports.find_user = function(req,res){
-    User.find({userID: req.params.userID},function(err,userData){
+    User.find({userID: req.body.userID},function(err,userData){
         if(err)
             res.send(err);
         res.json(userData);
@@ -26,13 +26,27 @@ exports.find_user = function(req,res){
 };
 
 exports.create_user = function(req,res){
-    var new_user = new User(req.body);
-    new_user.save(function(err,created_user){
-        if (err){
-            res.send(err);
-        }else {
-            res.json(created_user);
-            console.log("User Created.");
+    User.find({userID: req.body.userID},function(err,userData){
+        if(err){res.send(err);}
+        else{
+            if(userData.length === 0){
+                var new_user = new User();
+                new_user.userID = req.body.userID;
+                new_user.save(function(err,created_user){
+                    if (err){
+                        res.send(err);
+                    }else {
+                        res.status(201);
+                        res.json(created_user)
+                        console.log("User Created.")
+                    }
+                });
+            }else{
+                res.status(409)
+                res.json('User Exists')
+            }
         }
-    });
+    })
+    
+    
 };
