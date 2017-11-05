@@ -29,10 +29,11 @@ var PillSchema = new Schema({
 });
 
 var UserSchema = new Schema({
-    userID: String,
-    recent_search: {
-        type: String
-    }
+    userID: {
+        type:String,
+        index:{unique:true}
+    },
+    recent_search: [Number]
 })
 
 module.exports = mongoose.model('Pills', PillSchema),
