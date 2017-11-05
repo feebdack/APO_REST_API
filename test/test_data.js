@@ -43,3 +43,9 @@ module.exports.single_pill = {
 module.exports.user = {
     userID: "ab1234"
 }
+module.exports.user_with_searches = {
+    userID: "userID_with_recent_searches",
+    recent_search: [
+        26053,
+        26054]
+}

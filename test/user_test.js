@@ -34,5 +34,35 @@ describe('User - Single and Duplicate Post Checks', function () {
             })
         });
     });
-    //Test user find function
+});
+
+// Requesting an existing user should return user's recent searches
+describe('#GET /user/ return recent searches',function(){
+    //Create user with fresh data after each test
+    beforeEach(function(done){
+        var new_user = new Users(test_data.user_with_searches);
+        new_user.save(function(err,user){
+            if(err){throw err;}
+            return done();
+        })
+    });
+    //Remove all user info after each test
+    afterEach(function(done){
+        Users.remove({},function(err){
+            if(err){throw err;}
+            done();
+        })
+    });
+
+    it('should return recent searches',function(done){
+        request(app).get('/user/').send({'userID':test_data.user_with_searches.userID}).end(function(err,res){
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.recent_search).to.be.an('array');
+            for(pill_IDs in test_data.user_with_searches.recent_search){
+                expect(res.body.recent_search).to.contain(pill_IDs);
+            }
+            done();
+            
+        });
+    });
 });

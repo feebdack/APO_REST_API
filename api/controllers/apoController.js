@@ -38,7 +38,7 @@ exports.create_user = function(req,res){
                     }else {
                         res.status(201);
                         res.json(created_user)
-                        console.log("User Created.")
+                        //console.log("User Created.")
                     }
                 });
             }else{
