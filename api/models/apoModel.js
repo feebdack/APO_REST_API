@@ -29,7 +29,10 @@ var PillSchema = new Schema({
 });
 
 var UserSchema = new Schema({
-    userID: String,
+    userID: {
+        type:String,
+        index:{unique:true}
+    },
     recent_search: [Number]
 })
 

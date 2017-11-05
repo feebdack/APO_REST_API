@@ -18,9 +18,8 @@ exports.read_pill = function(req, res) {
 };
 
 exports.find_user = function(req,res){
-    User.find({userID: req.body.userID},function(err,userData){
-        if(err)
-            res.send(err);
+    User.findOne({userID: req.body.userID},function(err,userData){
+        if(err){res.send(err);}
         res.json(userData);
     });
 };

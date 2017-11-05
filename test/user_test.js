@@ -55,11 +55,12 @@ describe('#GET /user/ return recent searches',function(){
     });
 
     it('should return recent searches',function(done){
-        request(app).get('/user/').send({'userID':test_data.user_with_searches.userID}).end(function(err,res){
+        var user_req = {'userID':test_data.user_with_searches.userID}
+        request(app).get('/user/').send(user_req).end(function(err,res){
             expect(res.statusCode).to.equal(200);
             expect(res.body.recent_search).to.be.an('array');
-            for(pill_IDs in test_data.user_with_searches.recent_search){
-                expect(res.body.recent_search).to.contain(pill_IDs);
+            for(var i = 0; i< test_data.user_with_searches.recent_search.length;i++){
+                expect(res.body.recent_search).to.contain(test_data.user_with_searches.recent_search[i]);
             }
             done();
             
