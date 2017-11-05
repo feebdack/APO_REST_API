@@ -30,9 +30,7 @@ var PillSchema = new Schema({
 
 var UserSchema = new Schema({
     userID: String,
-    recent_search: {
-        type: String
-    }
+    recent_search: [Number]
 })
 
 module.exports = mongoose.model('Pills', PillSchema),
