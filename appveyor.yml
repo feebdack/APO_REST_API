@@ -1,0 +1,28 @@
+environment:
+  nodejs_version: "6.11.5"
+
+platform:
+  - x86
+  - x64
+
+services: mongodb
+install:
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  # install modules
+  - npm install
+  - set CI=true
+
+matrix:
+  fast_finish: true
+
+clone_depth: 1
+
+build: off
+
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  # run tests
+  - npm run ci_test
