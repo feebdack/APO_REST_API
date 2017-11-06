@@ -4,9 +4,9 @@
   "description": "Rest API for the APO pill identification mobile application",
   "main": "index.js",
   "scripts": {
-    "test": "START mongod & SET NODE_ENV=test & mocha --timeout 10000",
-    "prod": "START mongod & SET NODE_ENV=production & nodemon server.js",
-    "dev": "START mongod & SET NODE_ENV=development & nodemon server.js",
+    "test": "START mongod & SET NODE_ENV=test& mocha --timeout 10000",
+    "prod": "START mongod & SET NODE_ENV=production& nodemon server.js",
+    "dev": "START mongod & SET NODE_ENV=development& nodemon server.js",
     "import": "nodemon data_import.js",
     "import_dev": "START mongod & SET NODE_ENV=development& nodemon data_import.js"
   },

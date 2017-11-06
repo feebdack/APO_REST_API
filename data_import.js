@@ -9,7 +9,8 @@ console.log("-----Pill Data Importer-----");
     var mongoose = require('mongoose'),
     Pill = require('./api/models/apoModel');
 //Location of the TSV file being imported
-var import_tsv = {input:"data/pillbox_201605.txt"};
+//var import_tsv = {input:"data/pillbox_201605.txt"};
+var import_tsv = {input:"data/Single_Entry_Pill.txt"};
 
 
 //Connect to database

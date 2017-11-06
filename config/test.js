@@ -2,6 +2,6 @@
 
 module.exports = {
   env: 'test',
-  db: 'mongodb://localhost/apo_dev',
+  db: 'mongodb://localhost/apo_test',
   port: process.env.PORT || 4100,
 };

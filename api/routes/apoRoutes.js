@@ -8,7 +8,7 @@ module.exports = function(app) {
     app.route('/pill/:pillID')
         .get(apoController.read_pill);
     
-    app.route('/user/:userID')
+    app.route('/user/')
         .get(apoController.find_user)
         .post(apoController.create_user);
 
