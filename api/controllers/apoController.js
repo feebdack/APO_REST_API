@@ -19,6 +19,12 @@ exports.read_pill = function(req, res) {
 };
 
 exports.find_user = function(req,res){
+    if(req.body.userID == null){
+        res.status(400);
+        res.json(defined_messages.userID_field_missing);
+        res.send();
+        return;
+    }
     User.findOne({userID: req.body.userID},function(err,userData){
         if(err){res.send(err);}
         if(userData == null){

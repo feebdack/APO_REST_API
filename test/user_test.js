@@ -16,6 +16,23 @@ var defined_messages = require('../api/resources/controller_strings.js');
 
 var expect = chai.expect;
 
+describe('User - endpoint integrity pre-checks',function(){
+    it('#GET /user/ should return error when user does not exist',function(done){
+        request(app).get('/user/').send({'userID':'non-existing_user23'}).end(function(err,res){
+            expect(res.statusCode).to.equal(404);
+            expect(res.body).to.contain(defined_messages.user_not_found);
+            done();
+        });
+    });
+
+    it('#GET /user/ should return error if userID param not passed in',function(done){
+        request(app).get('/user/').end(function(err,res){
+            expect(res.statusCode).to.equal(400);
+            expect(res.body).to.contain(defined_messages.userID_field_missing);
+            done();
+        });
+    });
+});
 
 describe('User - Single and Duplicate Post Checks', function () {
     describe('#POST /user/ new_user', function () {
@@ -66,14 +83,6 @@ describe('#GET /user/ return recent searches',function(){
             }
             done();
             
-        });
-    });
-
-    it('should return error when user does not exist',function(done){
-        request(app).get('/user/').send({'userID':'non-existing_user23'}).end(function(err,res){
-            expect(res.statusCode).to.equal(404);
-            expect(res.body).to.contain(defined_messages.user_not_found);
-            done();
         });
     });
 });
