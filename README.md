@@ -9,7 +9,9 @@ The following instructions will get you a copy of this code up and running on yo
 The following software should already be installed on your system before moving forward.
 
 [Node.JS](https://nodejs.org)
+
 [NPM](https://www.npmjs.com/get-npm)
+
 [MongoDB](https://docs.mongodb.com/manual/installation/)
 
 ### Installation
@@ -37,7 +39,9 @@ npm test
 ## Built with
 The following frameworks were used in the development of this server.
 [Express.js](https://expressjs.com/) - used for http routing and controlling
+
 [mongoose.js](http://mongoosejs.com/) - used for connections to mongodb
+
 [mocha.js](https://mochajs.org/) - used as the testing framework
 ## Authors
 This program was developed by [Jesus Sergio Gonzalez](https://github.com/jgonzalezcastello/) 2017
