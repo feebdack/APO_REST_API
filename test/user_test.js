@@ -12,6 +12,8 @@ var Users = mongoose.model('Users');
 var Pills = mongoose.model('Pills');
 var test_data = require('./test_data');
 
+var defined_messages = require('../api/resources/controller_strings.js');
+
 var expect = chai.expect;
 
 
@@ -29,7 +31,7 @@ describe('User - Single and Duplicate Post Checks', function () {
         it('should prevent duplicate entry',function(done){
             request(app).post('/user/').send(test_data.user).end(function(err,res){
                 expect(res.statusCode).to.equal(409);
-                expect(res.body).to.equal('User Exists');
+                expect(res.body).to.equal(defined_messages.create_user_conflict);
                 done();
             })
         });

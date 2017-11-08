@@ -1,5 +1,6 @@
 'use strict';
 
+var defined_messages = require('../resources/controller_strings.js')
 
 var mongoose = require('mongoose'),
   Pill = mongoose.model('Pills'),
@@ -20,6 +21,10 @@ exports.read_pill = function(req, res) {
 exports.find_user = function(req,res){
     User.findOne({userID: req.body.userID},function(err,userData){
         if(err){res.send(err);}
+        if(userData.length === 0){
+            res.status(404)
+            res.send()
+        }
         res.json(userData);
     });
 };
@@ -42,7 +47,7 @@ exports.create_user = function(req,res){
                 });
             }else{
                 res.status(409)
-                res.json('User Exists')
+                res.json(defined_messages.create_user_conflict)
             }
         }
     })
