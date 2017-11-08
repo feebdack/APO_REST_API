@@ -68,4 +68,12 @@ describe('#GET /user/ return recent searches',function(){
             
         });
     });
+
+    it('should return error when user does not exist',function(done){
+        request(app).get('/user/').send({'userID':'non-existing_user23'}).end(function(err,res){
+            expect(res.statusCode).to.equal(404);
+            expect(res.body).to.contain(defined_messages.user_not_found);
+            done();
+        });
+    });
 });

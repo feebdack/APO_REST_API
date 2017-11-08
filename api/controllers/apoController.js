@@ -21,11 +21,13 @@ exports.read_pill = function(req, res) {
 exports.find_user = function(req,res){
     User.findOne({userID: req.body.userID},function(err,userData){
         if(err){res.send(err);}
-        if(userData.length === 0){
+        if(userData == null){
             res.status(404)
-            res.send()
+            res.json(defined_messages.user_not_found); 
+        }else{
+            res.json(userData);
         }
-        res.json(userData);
+        res.send()
     });
 };
 
