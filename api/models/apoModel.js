@@ -33,6 +33,7 @@ var UserSchema = new Schema({
         type:String,
         index:{unique:true}
     },
+    search_count: Number,
     recent_search: [Number]
 })
 
