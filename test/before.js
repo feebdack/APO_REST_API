@@ -15,7 +15,9 @@ var expect = chai.expect;
 
 before(function (done) {
     function clearCollections() {
-        Users.remove(function () { });
+        Users.remove({},function (err) {
+            if(err){throw err;}
+        });
         Pills.remove({},function(err){
             if(err){throw err;}
             return done();

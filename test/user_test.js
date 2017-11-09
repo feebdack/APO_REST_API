@@ -56,14 +56,19 @@ describe('User - Single and Duplicate Post Checks', function () {
 });
 
 // Requesting an existing user should return user's recent searches
-describe('#GET /user/ return recent searches',function(){
+describe('#GET /user/ functionality',function(){
     //Create user with fresh data after each test
     beforeEach(function(done){
-        var new_user = new Users(test_data.user_with_searches);
-        new_user.save(function(err,user){
+        var user_with_searches = new Users(test_data.user_with_searches);
+        user_with_searches.save(function(err,user){
             if(err){throw err;}
-            return done();
-        })
+            var user_without_searches = new Users(test_data.user);
+            user_without_searches.save(function(err2,user2){
+                if(err){throw err;}
+                return done();
+            });
+        });
+        
     });
     //Remove all user info after each test
     afterEach(function(done){
@@ -83,6 +88,27 @@ describe('#GET /user/ return recent searches',function(){
             }
             done();
             
+        });
+    });
+
+    it('should default search_count to zero when created',function(done){
+        Users.findOne({'userID':test_data.user.userID},function(err,user){
+            if(err){throw err;}
+            expect(user.search_count).to.be.a('number');
+            expect(user.search_count).to.equal(0);
+            done();
+        });
+    });
+
+    it('should increment when a pill search is made',function(done){
+        request(app).get('/pill/'+test_data.single_pill.pillID).set('userid',test_data.user.userID).end(function(err,res){
+            expect(res.statusCode).to.equal(200);
+            Users.findOne({'userID':test_data.user.userID},function(err,user){
+                if(err){throw err;}
+                expect(user.search_count).to.be.a('number');
+                expect(user.search_count).to.equal(1);
+                done();
+            });
         });
     });
 });

@@ -11,6 +11,13 @@ exports.read_pill = function(req, res) {
     if(req.params.pillID != 'search')
         req.query.pillID = req.params.pillID
     
+    //Increment user search count
+    if(req.headers.userid != null){
+        User.findOne({'userID' : req.headers.userid},function(err,user_data){
+            if(err){throw err;}
+            user_data.increment_query();
+        });
+    }
     //Search for pills
     Pill.find(req.query, function(err, pillData) {
         if (err) {res.send(err);}

@@ -33,9 +33,17 @@ var UserSchema = new Schema({
         type:String,
         index:{unique:true}
     },
-    search_count: Number,
+    search_count: {
+        type:Number,
+        default:0
+    },
     recent_search: [Number]
 })
+
+UserSchema.methods.increment_query = function(callback){
+    this.search_count ++;
+    this.save(callback);
+}
 
 module.exports = mongoose.model('Pills', PillSchema),
     mongoose.model('Users',UserSchema);
