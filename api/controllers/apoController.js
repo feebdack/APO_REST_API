@@ -6,6 +6,17 @@ var mongoose = require('mongoose'),
   Pill = mongoose.model('Pills'),
   User = mongoose.model('Users');
 
+  // The following functions take in requests and response pointers which are used
+  // to handle incomming requests. Each function is designed to handle specific requests
+
+
+  /*
+    read_pill: will find matching pill in database based on either the pillID or 
+                the http query parameters.
+    Parameters:
+        pillID - Optional. Unique identifier for a specific pillID.
+        query - Optional. Used to search specific parameters of a pill.
+  */
 exports.read_pill = function(req, res) {
     //Add pillID to the query parameters if it exists
     if(req.params.pillID != 'search')
@@ -25,6 +36,9 @@ exports.read_pill = function(req, res) {
     });
 };
 
+/*
+find_user
+*/
 exports.find_user = function(req,res){
     if(req.body.userID == null){
         res.status(400);

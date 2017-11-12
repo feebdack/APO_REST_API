@@ -11,6 +11,9 @@ var test_data = require('./test_data');
 
 var expect = chai.expect;
 
+//API Version Variable - All requests should route to version 1 of the api
+var v1 = '/api/1'
+
 describe('Pill Endpoint_Tests', function () {
 
     describe('#GET /Pill/'+test_data.single_pill.pillID, function () {
@@ -32,20 +35,20 @@ describe('Pill Endpoint_Tests', function () {
         });
 
         it('Should return status 200', function (done) {
-            request(app).get('/pill/'+test_data.single_pill.pillID).end(function (err, res) {
+            request(app).get(v1+'/pill/'+test_data.single_pill.pillID).end(function (err, res) {
                 expect(res.statusCode).to.equal(200);
                 done();
             });
         });
         it('Should return a non-empty array object', function (done) {
-            request(app).get('/pill/'+test_data.single_pill.pillID).end(function (err, res) {
+            request(app).get(v1+'/pill/'+test_data.single_pill.pillID).end(function (err, res) {
                 expect(res.body).to.be.an('array');
                 expect(res.body).to.not.be.empty;
                 done();
             });
         });
         it('Should have correct pill data', function (done) {
-            request(app).get('/pill/'+test_data.single_pill.pillID).end(function (err, res) {
+            request(app).get(v1+'/pill/'+test_data.single_pill.pillID).end(function (err, res) {
                 var ref_data = test_data.single_pill;
                 var response = res.body[0];
                 expect(response.pillID).to.equal(ref_data.pillID);
