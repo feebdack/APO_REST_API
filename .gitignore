@@ -1,6 +1,9 @@
 
 data/output.json
 
+#VS Code
+.vscode
+
 # Logs
 logs
 *.log

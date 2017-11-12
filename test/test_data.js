@@ -47,5 +47,6 @@ module.exports.user_with_searches = {
     userID: "userID_with_recent_searches",
     recent_search: [
         26053,
-        26054]
+        26054],
+    search_count: 2
 }
