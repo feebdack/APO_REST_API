@@ -40,7 +40,12 @@ var UserSchema = new Schema({
     recent_search: [Number]
 })
 
-UserSchema.methods.increment_query = function(callback){
+/**
+ * @param {Number} pillID The pill ID to add to the front of the list of recent searches
+ * @param callback
+ */
+UserSchema.methods.add_recent_search = function(pillID,callback){
+    this.recent_search.unshift(pillID);
     this.search_count ++;
     this.save(callback);
 }

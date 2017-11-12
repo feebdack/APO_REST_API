@@ -59,7 +59,7 @@ describe('User_v1 - Single and Duplicate Post Checks', function () {
 });
 
 // Requesting an existing user should return user's recent searches
-describe('User_v1 - /user/ Misc functionality',function(){
+describe('User_v1 - /user/ recent search functionality',function(){
     //Create user with fresh data after each test
     beforeEach(function(done){
         var user_with_searches = new Users(test_data.user_with_searches);
@@ -110,6 +110,17 @@ describe('User_v1 - /user/ Misc functionality',function(){
                 if(err){throw err;}
                 expect(user.search_count).to.be.a('number');
                 expect(user.search_count).to.equal(1);
+                done();
+            });
+        });
+    });
+
+    it('should have pillID of recently searched pill in recent_search array',function(done){
+        request(app).get(v1+'/pill/'+test_data.single_pill.pillID).set('userid',test_data.user.userID).end(function(err,res){
+            expect(res.statusCode).to.equal(200);
+            Users.findOne({'userID':test_data.user.userID},function(err,user){
+                if(err){throw err;}
+                expect(user.recent_search).to.contain(test_data.single_pill.pillID);
                 done();
             });
         });

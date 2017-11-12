@@ -26,7 +26,7 @@ exports.read_pill = function(req, res) {
     if(req.headers.userid != null){
         User.findOne({'userID' : req.headers.userid},function(err,user_data){
             if(err){throw err;}
-            user_data.increment_query();
+            user_data.add_recent_search(req.params.pillID);
         });
     }
     //Search for pills
