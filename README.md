@@ -36,6 +36,37 @@ To begin testing the server code, run the test script
 ```
 npm test
 ```
+### Using APO_API
+
+This api takes requests on two endpoints.
+
+#### `/pill/`
+
+Which is used to look for pills in the database. To access this endpoint either a pillID must be used in the endpoint to return information for a specific pill, or query parameters need to be passed into the endpoint. Below are examples on how to use each.
+
+`#GET /pill/{pillID}`
+where pillID is a known pillID identifier for a pill
+
+`#GET /pill/search?color={color}&shape={shape}`
+To get a full list of possible query parameters see th apoModel.js file within the api>models directory.
+
+##### Saving pill requests for a user
+To save an api request as a previous search in the database, the request header should contain a `userid` field with the userID as the value for the field. This will save any pillID queries to the list of recent searches for the user
+
+#### `/user/`
+Which is used to register new users, or retrieve a list of recent pill searches for a user.
+User registration simply works by adding a user with a userID to the server.
+JSON Body should contain 
+`{userID: [string]}` for either GET or POST requests.
+
+`#GET /user/`
+Which should contain a json object containing userID with a string value which is the userID.
+This will return a JSON array of pillIDs corresponding to the recent searches for the user.
+
+`#POST /user/`
+Which should contain a single json variable userID with a string which is the userID for the new user. Trying to add a user that exists will result in a 409 status code and a conflict error message in the body.
+
+
 ## Built with
 The following frameworks were used in the development of this server.
 
