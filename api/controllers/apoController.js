@@ -2,7 +2,7 @@
 
 var defined_messages = require('../resources/controller_strings.js')
 
-var mongoose = require('mongoose'),
+var mongoose = require('../models'),
   Pill = mongoose.model('Pills'),
   User = mongoose.model('Users');
 

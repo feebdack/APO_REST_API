@@ -3,13 +3,10 @@ var config = require('./config');
 var express = require('express'),
     app = express(),
     port = config.port || 80,
-    mongoose = require('mongoose'),
+    //mongoose = require('mongoose'),
+    mongoose = require('./api/models'),
     bodyParser = require('body-parser'),
-    Pill = require('./api/models/apoModel'),
     routes = require('./api/routes/apoRoutes');
-
-    mongoose.Promise = global.Promise;
-    mongoose.connect(config.db,{ useMongoClient: true });
 
     //Any time any route is called, the folowing functions are executed on the request.
     //the following two function parse through incoming data. Since incomming data is
@@ -24,6 +21,10 @@ var express = require('express'),
 
     app.listen(config.port);
 
-    console.log("APO REST API started on: " + config.port);
+    
 
     module.exports = app;
+
+    mongoose.connection.on('connected',function(){
+        console.log("APO REST API started on: " + config.port);
+    });

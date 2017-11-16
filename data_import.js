@@ -6,50 +6,17 @@ console.log("-----Pill Data Importer-----");
     var tsv = require('node-tsv-json');
 
 //Database variables
-    var mongoose = require('mongoose'),
+    var mongoose = require('./api/models'),
     Pill = require('./api/models/apoModel');
 //Location of the TSV file being imported
 //var import_tsv = {input:"data/pillbox_201605.txt"};
 var import_tsv = {input:"data/Single_Entry_Pill.txt"};
 
 
-//Connect to database
-    var dbURI = 'mongodb://127.0.0.1/apo_dev';    
-    mongoose.Promise = global.Promise;
-    mongoose.connect(dbURI,{useMongoClient:true});
-
-//Databse Events Handlers
-
-    Pill.on("index",function(err){
-        if(err){throw err;}
-        console.log("Indexes for data_import finished building.");
-    })
-    mongoose.connection.on("connected",function(){
-        var importer = require('./data_import')
-        console.log("Connection to " + dbURI + " established succesfully.");
-        
-        //Make sure environment is dev for import
-        if(process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'production')
-            importer.read_tsv_file(import_tsv);
-    });
-
-    mongoose.connection.on('error',function(err){
-        console.log("DB ERROR: " + err);
-    });
-
-    mongoose.connection.on('disconnected',function(){
-        console.log('DB DISCONNECTED.');
-        process.exit();
-    });
-
-    process.on('SIGINT',function(){
-        console.log('Termination called.')
-        mongoose.connection.close(function(){
-            process.exit();
-        });
-    });
-
-
+var importer = this;
+mongoose.connection.on('connected',function(){
+    importer.read_tsv_file(import_tsv);
+})
 //Progress Bar Variables
 //Ubar and Pbar contain the progress bar objects
 //pbar_length contains the number of ticks needed to complete the progress bar
