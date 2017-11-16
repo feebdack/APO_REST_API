@@ -50,5 +50,5 @@ UserSchema.methods.add_recent_search = function(pillID,callback){
     this.save(callback);
 }
 
-module.exports = mongoose.model('Pills', PillSchema),
-    mongoose.model('Users',UserSchema);
+module.exports.pill = PillSchema;
+module.exports.user = UserSchema;
