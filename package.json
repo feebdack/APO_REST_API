@@ -8,6 +8,7 @@
     "test": "START mongod & SET NODE_ENV=test& mocha --exit --timeout 3000",
     "test_coverage": "START mongod & SET NODE_ENV=test& nyc --reporter=html --reporter=text mocha --exit --timeout 3000",
     "prod": "START mongod & SET NODE_ENV=production& nodemon server.js",
+    "prod_linux":"NODE_ENV=production exec node server.js",
     "dev": "START mongod & SET NODE_ENV=development& nodemon server.js",
     "import": "nodemon data_import.js",
     "import_dev": "START mongod & SET NODE_ENV=development& nodemon data_import.js"
