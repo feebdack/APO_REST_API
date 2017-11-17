@@ -138,7 +138,7 @@ exports.read_tsv_file = function (file) {
                         color: pill_obj.splcolor_text.split(" ")[0].split(";"),
                         active_ingredient: pill_obj.spl_strength.split(";"),
                         inactive_ingredient: pill_obj.spl_inactive_ing_new.split(";"),
-                        rxString: pill_obj.rxString_new || pill_obj.rxString,
+                        rxString: pill_obj.rxstring_new || pill_obj.rxstring,
                         product_code: pill_obj.product_code,
                         medicine_name: pill_obj.medicine_name,
                         equal_product_code: pill_obj.equal_product_code,
