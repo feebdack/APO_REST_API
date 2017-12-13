@@ -97,8 +97,6 @@ describe('Pill Endpoint_Tests', function () {
             request(app).get(v1+'/pill/search?medicine_name='+test_data.two_pills[0].medicine_name.replace(" ","+")).end(function (err, res) {
                 expect(res.body).to.be.an('array');
                 expect(res.body).to.have.lengthOf(2);
-                expect(res.body[0].medicine_name).to.equal(test_data.two_pills[0].medicine_name);
-                expect(res.body[1].medicine_name).to.equal(test_data.two_pills[1].medicine_name);
                 done();
             });
         });
