@@ -19,8 +19,14 @@ var mongoose = require('../models'),
   */
 exports.read_pill = function(req, res) {
     //Add pillID to the query parameters if it exists
-    if(req.params.pillID != 'search')
+    if(req.params.pillID != 'search'){
         req.query.pillID = req.params.pillID
+    }else{
+        //Prepares the query to make sure partial strings work
+        for( const key of Object.keys(req.query)){
+            req.query[key] = {"$regex":req.query[key],'$options':'i'};
+        }
+    }
     
     //Increment user search count
     if(req.headers.userid != null){
