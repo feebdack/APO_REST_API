@@ -84,7 +84,8 @@ Subsequent pages need to have the page value for the page that is being requeste
 ```
 http://HOST/api/2/pill/search?<<Search Query>>&page=2
 ```
-
+### Responses
+The following elements describe the structure of the response JSON in API 2.
 #### search
 Contains the query items used for the search results from this response.
 #### page
