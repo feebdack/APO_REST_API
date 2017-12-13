@@ -6,6 +6,8 @@ var mongoose = require('../models'),
   Pill = mongoose.model('Pills'),
   User = mongoose.model('Users');
 
+var perPage = 10;
+
   // The following functions take in requests and response pointers which are used
   // to handle incomming requests. Each function is designed to handle specific requests
 
@@ -18,7 +20,51 @@ var mongoose = require('../models'),
         query - Optional. Used to search specific parameters of a pill.
   */
 exports.read_pill = function(req, res) {
+    //Page query parameter introduced in v2 should not exist in this function
+    if(req.query.page != undefined){
+        delete req.query['page'];
+        res.send("ERROR: page requests should use API 2.\nex\nhttp://host/api/2/pill/search?page=x...");
+    }
+
     //Add pillID to the query parameters if it exists
+    if(req.params.pillID != 'search'){
+        req.query.pillID = req.params.pillID
+    }else{
+        //Prepares the query to make sure partial strings work
+        for( const key of Object.keys(req.query)){
+            req.query[key] = {"$regex":req.query[key],'$options':'i'};
+        }
+    }
+    
+    //Increment user search count
+    if(req.headers.userid != null && req.params.pillID != 'search'){
+        User.findOne({'userID' : req.headers.userid},function(err,user_data){
+            if(err){throw err;}
+            user_data.add_recent_search(req.params.pillID);
+        });
+    }
+    //Search for pills
+    Pill.find(req.query, function(err, pillData) {
+        if (err) {res.send(err);}
+        res.json(pillData);
+    });
+};
+
+  /*
+    read_pill_v2: will find matching pill in database.
+            responses are returned in pages of size perPage
+  */
+  exports.read_pill_v2 = function(req, res) {
+    
+    //Handle pages
+    var page = 1;
+    if(req.query.page != undefined){
+        page = req.query.page;
+        delete req.query['page'];
+    }
+    //The following creates a deep copy of the original contents. prevents reference copy
+    var requested_query = JSON.parse(JSON.stringify(req.query));
+    //Add pillID to the query parameters if we are searching for an exact pill
     if(req.params.pillID != 'search'){
         req.query.pillID = req.params.pillID
     }else{
@@ -38,8 +84,11 @@ exports.read_pill = function(req, res) {
     //Search for pills
     Pill.find(req.query, function(err, pillData) {
         if (err) {res.send(err);}
-        res.json(pillData);
-    });
+        var prepared_response = {"search:":requested_query,"page":page,"results":pillData};
+        res.json(prepared_response);
+    })
+    .limit(perPage)
+    .skip(perPage * (page - 1));
 };
 
 /*

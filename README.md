@@ -36,7 +36,7 @@ To begin testing the server code, run the test script
 ```
 npm test
 ```
-### Using APO_API
+## Using APO_API V1
 
 This api takes requests on two endpoints.
 
@@ -66,6 +66,42 @@ This will return a JSON array of pillIDs corresponding to the recent searches fo
 `#POST /user/`
 Which should contain a single json variable userID with a string which is the userID for the new user. Trying to add a user that exists will result in a 409 status code and a conflict error message in the body.
 
+## Using APO_API V2
+Version 2 of the apo API introduces pages to query searches. Results from searching the /pill endpoint will now be returned in chunks of 10
+### Requests
+Request for API 2 are similar to API 1. The only difference is in requesting for pages beyond the first, which requires the "page" query as shown below.
+
+Requesting for first 10 results
+```
+http://HOST/api/2/pill/search?<<Search Query>>
+```
+or
+```
+http://HOST/api/2/pill/search?<<Search Query>>&page=1
+```
+
+Subsequent pages need to have the page value for the page that is being requested. For example, searching for page 2 would require the following request.
+```
+http://HOST/api/2/pill/search?<<Search Query>>&page=2
+```
+
+#### search
+Contains the query items used for the search results from this response.
+#### page
+contains the page for the results included in this response.
+#### results
+contains the array of data for the current page of the search terms for this request. This array is the array that is returned by API 1.
+
+```
+{
+    "search:": {
+        "medicine_name": "Advil",
+        "color": "blue"
+    },
+    "page": "1",
+    "results": [<<Results for page 1. This is the array returned by API 1>> ] 
+}
+```
 
 ## Built with
 The following frameworks were used in the development of this server.
