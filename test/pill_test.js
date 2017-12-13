@@ -33,7 +33,6 @@ describe('Pill Endpoint_Tests', function () {
                 return done();
             })
         });
-
         it('Should return status 200', function (done) {
             request(app).get(v1+'/pill/'+test_data.single_pill.pillID).end(function (err, res) {
                 expect(res.statusCode).to.equal(200);
@@ -63,6 +62,43 @@ describe('Pill Endpoint_Tests', function () {
                 expect(response.active_ingredient).to.be.an('array');
                 expect(response.color).to.be.an('array');
                 expect(response.imprint).to.be.an('array');
+                done();
+            });
+        });
+    });
+    describe('#GET /Pill/search? Query Tests', function () {
+            //Add test pill before each test
+            beforeEach(function(done){
+                for(var i = 0; i<2 ;i++){
+                    var new_pill = new Pill(test_data.two_pills[i]);
+                    new_pill.save(function(err,created){
+                        if(err){throw err;}
+                    })
+                }
+                return done();
+            });
+    
+            //Remove all pill data before each test
+            afterEach(function(done){
+                Pill.remove({},function(err){
+                    if(err){throw err;}
+                    return done();
+                })
+            });
+        it('Should return pill when searching for medicine_name',function(done){
+            request(app).get(v1+'/pill/search?medicine_name='+test_data.two_pills[1].medicine_name.replace(" ","+")).end(function (err, res) {
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.lengthOf(1);
+                expect(res.body[0].medicine_name).to.contain(test_data.two_pills[1].medicine_name);
+                done();
+            });
+        });
+        it('Should return both pills with partial match of medecine name',function(done){
+            request(app).get(v1+'/pill/search?medicine_name='+test_data.two_pills[0].medicine_name.replace(" ","+")).end(function (err, res) {
+                expect(res.body).to.be.an('array');
+                expect(res.body).to.have.lengthOf(2);
+                expect(res.body[0].medicine_name).to.equal(test_data.two_pills[0].medicine_name);
+                expect(res.body[1].medicine_name).to.equal(test_data.two_pills[1].medicine_name);
                 done();
             });
         });
